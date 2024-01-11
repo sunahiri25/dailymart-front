@@ -1,4 +1,3 @@
-import { UserInfo } from "@/models/UserInfo";
 import bcrypt from "bcrypt";
 import { User } from '@/models/User';
 import NextAuth, { getServerSession } from "next-auth";
@@ -44,12 +43,10 @@ export const authOptions = {
 
         async session({ session, token }) {
             if (token?._id) session.user._id = token._id;
+            session.accessToken = token.accessToken;
             return session;
         },
-        async signIn({ account, profile }) {
-            if (account.type === 'credentials') {
-                return true;
-            }
+        async signIn({ account, profile, credentials, session }) {
             return true;
         }
 
@@ -60,6 +57,10 @@ export const authOptions = {
     session: {
         strategy: 'jwt',
         maxAge: 30 * 24 * 60 * 60,
+    },
+    jwt: {
+        secret: process.env.SECRET,
+        encryption: true,
     },
 };
 

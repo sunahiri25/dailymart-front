@@ -8,7 +8,8 @@ import { getSession, useSession } from "next-auth/react";
 import BrandBanner from "@/components/BrandBanner";
 
 
-export default function Home({ newProducts, memberOffers, allProducts, session }) {
+export default function Home({ newProducts, memberOffers, allProducts }) {
+  const session = useSession();
   return (
     <div>
       <Header products={allProducts} />
@@ -23,13 +24,11 @@ export default function Home({ newProducts, memberOffers, allProducts, session }
 
 export async function getServerSideProps(context) {
   await mongooseConnect();
-  const session = await getSession({ req: context.req });
   const newProducts = await Product.find({}, null, { limit: 10, sort: { 'updatedAt': -1 } })
   const memberOffers = await Product.find({}, null, { limit: 10, sort: { 'title': -1 } })
   const allProducts = await Product.find({}, null, { sort: { 'title': -1 } })
   return {
     props: {
-      session,
       newProducts: JSON.parse(JSON.stringify(newProducts)),
       memberOffers: JSON.parse(JSON.stringify(memberOffers)),
       allProducts: JSON.parse(JSON.stringify(allProducts)),

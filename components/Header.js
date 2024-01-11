@@ -338,7 +338,6 @@ export default function Header({ products }) {
                     )}
                 </Wrapper>
             </Center>
-
         </StyledHeader>
 
     )
@@ -346,11 +345,9 @@ export default function Header({ products }) {
 
 export async function getServerSideProps(context) {
     await mongooseConnect();
-    const session = await getSession({ req: context.req });
     const products = await Product.find({}, null);
     return {
         props: {
-            session,
             products: JSON.parse(JSON.stringify(products)),
         }
     };

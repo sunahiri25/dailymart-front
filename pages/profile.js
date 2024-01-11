@@ -175,12 +175,10 @@ export default function ProfilePage({ allProducts }) {
 
 }
 export async function getServerSideProps(context) {
-    const session = await getSession({ req: context.req });
     const allProducts = await Product.find({}, null, { sort: { 'title': -1 } })
 
     return {
         props: {
-            session,
             allProducts: JSON.parse(JSON.stringify(allProducts))
         }
     }

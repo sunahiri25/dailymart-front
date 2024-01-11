@@ -46,6 +46,12 @@ export const authOptions = {
             if (token?._id) session.user._id = token._id;
             return session;
         },
+        async signIn({ account, profile }) {
+            if (account.type === 'credentials') {
+                return true;
+            }
+            return true;
+        }
 
     },
     pages: {

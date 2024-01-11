@@ -53,21 +53,9 @@ export const authOptions = {
     },
     session: {
         strategy: 'jwt',
-        maxAge: 30 * 24 * 60 * 60, // 30 days
+        maxAge: 30 * 24 * 60 * 60,
     },
 };
 
-export async function isAdminRequest(req, res) {
-    const session = await getServerSession(req, res, authOptions)
-    const userEmail = session?.user?.email;
-
-    const userInfo = await UserInfo.findOne({ email: userEmail });
-    if (!userInfo || userInfo.role !== 'admin') {
-        res.status(401);
-        res.end()
-        throw new Error('Unauthorized');
-    }
-
-}
 export default NextAuth(authOptions);
 

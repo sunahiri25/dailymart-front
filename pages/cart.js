@@ -42,7 +42,6 @@ export default function Cart({ discounts, allProducts, categories }) {
     const session = useSession();
     const userData = session?.data?.user;
     const { store } = useContext(StoreContext);
-    const [quantity, setQuantity] = useState(0);
     const [stores, setStores] = useState([]);
 
     useEffect(() => {
@@ -80,33 +79,35 @@ export default function Cart({ discounts, allProducts, categories }) {
         }
     }, [isSuccess]);
 
-    function getQuantity(id) {
+    async function getQuantity(id) {
+        let quantity = 0;
         if (store && id) {
-            axios.get('/api/stock?store=' + store._id + '&product=' + id)
+            await axios.get('/api/stock?store=' + store._id + '&product=' + id)
                 .then(res => {
                     if (res.data) {
-                        setQuantity(res.data.quantity);
+                        quantity = res.data.quantity;
                     } else {
-                        setQuantity(0);
+                        quantity = 0;
                     };
                 })
                 .catch(err => console.log(err))
 
         } else {
-            axios.get('/api/stock?product=' + id)
+            await axios.get('/api/stock?product=' + id)
                 .then(res => {
                     if (res.data?.length > 0) {
                         let q = 0;
                         res.data.map(s => {
                             q += s.quantity
                         })
-                        setQuantity(q);
+                        quantity = q;
                     } else {
-                        setQuantity(0);
+                        quantity = 0;
                     };
                 })
                 .catch(err => console.log(err))
         }
+        return quantity;
     };
     useEffect(() => {
         axios.get('/api/stores').then(res => {
@@ -115,8 +116,8 @@ export default function Cart({ discounts, allProducts, categories }) {
     }, []);
 
 
-    function increaseQuantity(id) {
-        getQuantity(id);
+    async function increaseQuantity(id) {
+        const quantity = await getQuantity(id);
         addToCart(id, quantity);
     }
     function decreaseQuantity(id) {

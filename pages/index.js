@@ -8,65 +8,51 @@ import { getSession, useSession } from "next-auth/react";
 import BrandBanner from "@/components/BrandBanner";
 import styled from "styled-components";
 import { Category } from "@/models/Category";
-import Link from "next/link";
-import ProductBox from "@/components/ProductBox";
-import Button from "@/components/Button";
-import Center from "@/components/Center";
+import CategoryBox from "@/components/CategoryBox";
 
-const ProductsGrid = styled.div`
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 15px;
-padding-top: 10px;
-@media screen and (min-width: 768px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
-}
-`
 export default function Home({ newProducts, memberOffers, allProducts, categories, products }) {
   const session = useSession();
+
   return (
     <div>
       <Header products={allProducts} />
       <Banner />
       <FlashDeal title={'Sản Phẩm Khuyến Mãi'} products={newProducts} />
       {session?.data?.user?.email && <FlashDeal title={'Ưu Đãi Hội Viên'} products={memberOffers} />}
-      <Center>
-      <div className="mt-5">
-        {categories?.length > 0 && categories.map(category =>
-        (
-          !category.parent && (
-            <div key={category} className="bg-white rounded-lg shadow-lg my-4">
-              <div className="p-5">
-                <p className="text-lg font-bold">{category.name}</p>
-                <div>
-                  {categories.map(subCategory => (
-                    subCategory.parent === category._id && (
-                      <div key={subCategory}>
-                        <Link className="font-bold text-gray-600" href={'/categories/' + subCategory._id}>{subCategory.name}</Link>
-                        <ProductsGrid>
-                          {products
-                            .filter(product => product.category === subCategory._id)
-                            .slice(0, 5)
-                            .map(product => (
-                              <div key={product}>
-                                <ProductBox {...product} />
-                              </div>
-                            ))}
-                        </ProductsGrid>
-                        <Link href={'/categories/' + subCategory._id}><Button white className='my-3'>Xem thêm sản phẩm</Button></Link>
+      <CategoryBox categories={categories} products={products} name={'Thịt'} />
 
-                      </div>
-                    )))}
-                </div>
-              </div>
-            </div>
-          )
-        )
-        )}
-      </div>
-      </Center>
+      <CategoryBox categories={categories} products={products} name={'Rau Lá'} />
+      <CategoryBox categories={categories} products={products} name={'Trái cây tươi'} />
+      <CategoryBox categories={categories} products={products} name={'Củ, Quả'} />
       <BrandBanner />
+      <CategoryBox categories={categories} products={products} name={'Kẹo - Chocolate'} />
+      <CategoryBox categories={categories} products={products} name={'Bánh Snack'} />
+      <CategoryBox categories={categories} products={products} name={'Bánh Xốp - Bánh Quy'} />
+      <CategoryBox categories={categories} products={products} name={'Nước ngọt'} />
+      <CategoryBox categories={categories} products={products} name={'Cà phê'} />
+      <CategoryBox categories={categories} products={products} name={'Nước khoáng'} />
+      <CategoryBox categories={categories} products={products} name={'Trà - Các loại khác'} />
+      <CategoryBox categories={categories} products={products} name={'Sữa Tươi'} />
+      <CategoryBox categories={categories} products={products} name={'Sữa Hạt - Sữa Đậu'} />
+      <CategoryBox categories={categories} products={products} name={'Sữa Chua - Váng Sữa'} />
+      <CategoryBox categories={categories} products={products} name={'Bơ Sữa - Phô Mai'} />
+      <CategoryBox categories={categories} products={products} name={'Bia'} />
+      <CategoryBox categories={categories} products={products} name={'Chăm Sóc Tóc'} />
+      <CategoryBox categories={categories} products={products} name={'Chăm Sóc Da'} />
+      <CategoryBox categories={categories} products={products} name={'Chăm Sóc Răng Miệng'} />
+      <CategoryBox categories={categories} products={products} name={'Chăm Sóc Phụ Nữ'} />
+      <CategoryBox categories={categories} products={products} name={'Mỹ Phẩm'} />
+      <CategoryBox categories={categories} products={products} name={'Nước Rửa Chén'} />
+      <CategoryBox categories={categories} products={products} name={'Nước Giặt'} />
+      <CategoryBox categories={categories} products={products} name={'Nước Xả'} />
+      <CategoryBox categories={categories} products={products} name={'Nước Lau Sàn - Lau Kính'} />
+      <CategoryBox categories={categories} products={products} name={'Văn phòng phẩm'} />
+      <CategoryBox categories={categories} products={products} name={'Đồ chơi'} />
+      <CategoryBox categories={categories} products={products} name={'Thiết bị bếp'} />
+      <CategoryBox categories={categories} products={products} name={'Thiết bị sinh hoạt'} />
+
+
+
       <Footer />
     </div>
   )
@@ -74,11 +60,11 @@ export default function Home({ newProducts, memberOffers, allProducts, categorie
 
 export async function getServerSideProps(context) {
   await mongooseConnect();
-  const newProducts = await Product.find({}, null, { limit: 10, sort: { 'updatedAt': -1 } })
-  const memberOffers = await Product.find({}, null, { limit: 10, sort: { 'title': -1 } })
+  const newProducts = await Product.aggregate([{ $match: { active: 'Active' } }, { $sample: { size: 10 } }]);
+  const memberOffers = await Product.aggregate([{ $match: { active: 'Active' } }, { $sample: { size: 10 } }]);
   const allProducts = await Product.find({}, null, { sort: { 'title': -1 } });
-  const products = await Product.find({ active: 'Active' }, null, { sort: { '_id': -1 } });
   const categories = await Category.find({}, null);
+  const products = await Product.find({ active: 'Active' }, null, { sort: { '_id': -1 } });
   return {
     props: {
       newProducts: JSON.parse(JSON.stringify(newProducts)),

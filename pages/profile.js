@@ -45,7 +45,7 @@ export default function ProfilePage({ allProducts }) {
             router.push('/login');
         }
         setEmail(profileEmail);
-    }, []);
+    }, [session]);
     useEffect(() => {
         axios.get('/api/profile/?email=' + profileEmail).then(response => {
             const data = response.data;

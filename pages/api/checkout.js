@@ -34,7 +34,7 @@ export default async function handler(req, res) {
             percentage: category.vat,
         });
         if (quantity > 0 && info) {
-            if (discount) {
+            if (discount && (new Date(discount.start) - new Date() < 0) && (new Date(discount.end) - new Date() > 0)) {
                 if (discount.unit === '%') {
                     const maxDiscount = info.retailPrice * discount.value / 100 > discount.max ? discount.max : info.retailPrice * discount.value / 100;
                     line_items.push({

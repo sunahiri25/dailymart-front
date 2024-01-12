@@ -342,6 +342,7 @@ export default function Cart({ discounts, allProducts, categories }) {
                                         <label>Email</label>
                                         <input type="email" placeholder="Email" className=" border-2 border-gray-200 rounded px-3 py-2 w-full mb-2  "
                                             name='email' value={email} onChange={e => setEmail(e.target.value)} disabled={userData} required />
+                                        <label>Tỉnh/Thành phố</label>
                                         <input type="text" placeholder="Tỉnh/Thành phố" className=" border-2 border-gray-200 rounded px-3 py-2 w-full mb-2 "
                                             name='city' value={city} onChange={e => setCity(e.target.value)} required />
                                         <div className="flex gap-2 items-center">

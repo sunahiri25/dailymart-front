@@ -67,7 +67,7 @@ export default function CategoryPage({ categories, products, allProducts }) {
 
 export async function getServerSideProps() {
     await mongooseConnect();
-    const categories = await Category.find({}, null, { sort: { '_id': -1 } });
+    const categories = await Category.find({}, null, { sort: { 'name': -1 } });
     const products = await Product.find({ active: 'Active' }, null, { sort: { '_id': -1 } });
     const allProducts = await Product.find({}, null, { sort: { 'title': -1 } })
 

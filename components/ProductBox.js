@@ -34,12 +34,11 @@ justify-content: center;
 border-radius: 5px;
 img {
     max-width: 50%;
-    max-height: 40x;
 }
 @media screen and (min-width: 768px) {
     img {
         max-width: 100%;
-        max-height: 80x;
+        max-height: 125px
     }
   }
 `
@@ -141,7 +140,7 @@ export default function ProductBox({ _id, title, description, purchasePrice, ret
                 </div>
             </WhiteBox>
             <ProductInfoBox>
-                <Title href={url}>{title}</Title>
+                <Title href={url} className="line-clamp-2">{title}</Title>
                 <div className="flex items-center gap-4">
                     <p className="text-red-600 font-bold my-2">
                         {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(newPrice)}</p>

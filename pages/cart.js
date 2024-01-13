@@ -288,7 +288,7 @@ export default function Cart({ discounts, allProducts, categories }) {
                                                                     )}
                                                                     {discounts?.find(discount => discount.category === item.category && discount.unit === 'VND') && (
                                                                         <div className="text-red-500 font-bold">
-                                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.retailPrice - discounts.find(discount => discount.category === item.category && discount.unit === 'VND').value * cart.filter(id => id === item._id).length)}
+                                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format((item.retailPrice - discounts.find(discount => discount.category === item.category && discount.unit === 'VND').value) * cart.filter(id => id === item._id).length)}
                                                                         </div>
                                                                     )}
 

@@ -212,7 +212,7 @@ export default function Home() {
             </div>
 
             <h1 className='text-black mt-4'>Last 7 Days Revenue & Profit</h1>
-            <div className="flex w-full my-auto mx-auto">
+            <div className="w-full my-auto mx-auto">
                 <div className="w-2/3 h-fit mx-auto">
                     <canvas id="myChart"></canvas>
                 </div>

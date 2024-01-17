@@ -8,25 +8,27 @@ import { getSession, useSession } from "next-auth/react";
 import BrandBanner from "@/components/BrandBanner";
 import { Category } from "@/models/Category";
 import CategoryBox from "@/components/CategoryBox";
-import { UserInfo } from "@/models/UserInfo";
+import { useEffect } from "react";
 
-export default function Home({ newProducts, memberOffers, allProducts, categories, products, role }) {
-  const session = useSession();
-  if (typeof window !== 'undefined') {
-    if (role?.role === 'admin') {
-      window.location.href = '/admin'
-    } else if (role?.role === 'staff') {
-      window.location.href = '/staff'
-    }
-  }
+export default function Home({ newProducts, categories, products }) {
+  // const session = useSession();
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     if (session?.data?.user?.role === 'admin') {
+  //       window.location.href = "/admin"
+  //     }
+  //     if (session?.data?.user?.role === 'staff') {
+  //       window.location.href = "/staff"
+  //     }
+  //   }
+  // }, [session]);
   return (
     <div>
-      <Header products={allProducts} />
+      <Header products={products} />
       <Banner />
       <FlashDeal title={'Sản Phẩm Khuyến Mãi'} products={newProducts} />
-      {session?.data?.user?.email && <FlashDeal title={'Ưu Đãi Hội Viên'} products={memberOffers} />}
+      {/* {session?.data?.user?.email && <FlashDeal title={'Ưu Đãi Hội Viên'} products={memberOffers} />} */}
       <CategoryBox categories={categories} products={products} name={'Thịt'} />
-
       <CategoryBox categories={categories} products={products} name={'Rau Lá'} />
       <CategoryBox categories={categories} products={products} name={'Trái cây tươi'} />
       <CategoryBox categories={categories} products={products} name={'Củ, Quả'} />
@@ -56,9 +58,6 @@ export default function Home({ newProducts, memberOffers, allProducts, categorie
       <CategoryBox categories={categories} products={products} name={'Đồ chơi'} />
       <CategoryBox categories={categories} products={products} name={'Thiết bị bếp'} />
       <CategoryBox categories={categories} products={products} name={'Thiết bị sinh hoạt'} />
-
-
-
       <Footer />
     </div>
   )
@@ -66,21 +65,36 @@ export default function Home({ newProducts, memberOffers, allProducts, categorie
 
 export async function getServerSideProps(context) {
   await mongooseConnect();
-  const newProducts = await Product.aggregate([{ $match: { active: 'Active' } }, { $sample: { size: 10 } }]);
-  const memberOffers = await Product.aggregate([{ $match: { active: 'Active' } }, { $sample: { size: 10 } }]);
-  const allProducts = await Product.find({}, null, { sort: { 'title': -1 } });
+  const session = await getSession(context);
+  
+  if (session?.user?.role === 'admin') {
+    return {
+      redirect: {
+        destination: '/admin',
+        permanent: false,
+      },
+    }
+  }
+  if (session?.user?.role === 'staff') {
+    return {
+      redirect: {
+        destination: '/staff',
+        permanent: false,
+      },
+    }
+  }
+  // const memberOffers = await Product.aggregate([{ $match: { active: 'Active' } }, { $sample: { size: 10 } }]);  
   const categories = await Category.find({}, null);
   const products = await Product.find({ active: 'Active' }, null, { sort: { '_id': -1 } });
-  const session = await getSession(context);
-  const role = await UserInfo.findOne({ email: session?.user?.email });
+  const newProducts = products.sort(() => Math.random() - 0.5).slice(0, 10);
+
+
   return {
     props: {
       newProducts: JSON.parse(JSON.stringify(newProducts)),
-      memberOffers: JSON.parse(JSON.stringify(memberOffers)),
-      allProducts: JSON.parse(JSON.stringify(allProducts)),
+      // memberOffers: JSON.parse(JSON.stringify(memberOffers)),
       categories: JSON.parse(JSON.stringify(categories)),
       products: JSON.parse(JSON.stringify(products)),
-      role: JSON.parse(JSON.stringify(role)),
     }
   }
 }

@@ -6,12 +6,14 @@ import { useState } from "react";
 
 export default function Layout({ children }) {
     const [showNav, setShowNav] = useState(false)
-    const session = useSession()
+    const session = useSession()    
     if (typeof window !== "undefined") {
         if (session.status === "unauthenticated") {
             window.location.href = "/login"
+        } 
+        if (session.status === "authenticated" && session?.data?.user?.role !== 'staff') {
+            window.location.href = "/login"
         }
-
     }
     return (
         <div>

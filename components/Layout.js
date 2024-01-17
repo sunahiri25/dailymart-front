@@ -11,7 +11,9 @@ export default function Layout({ children }) {
         if (session.status === "unauthenticated") {
             window.location.href = "/login"
         }
-        
+        if(session.status === 'authenticated' && session?.data?.user?.role !== 'admin') {
+            window.location.href = "/login"
+        }
     }
     return (
         <div>

@@ -20,10 +20,10 @@ padding-top: 10px;
 }
 `
 
-export default function CategoryPage({ categories, products, allProducts }) {
+export default function CategoryPage({ categories, products }) {
     return (
         <>
-            <Header products={allProducts} />
+            <Header products={products} />
             <Center>
                 <p className="text-2xl font-bold mt-5">Danh mục</p>
                 <div className="mt-5">
@@ -69,13 +69,12 @@ export async function getServerSideProps() {
     await mongooseConnect();
     const categories = await Category.find({}, null, { sort: { 'name': -1 } });
     const products = await Product.find({ active: 'Active' }, null, { sort: { '_id': -1 } });
-    const allProducts = await Product.find({}, null, { sort: { 'title': -1 } })
-
+    
     return {
         props: {
             categories: JSON.parse(JSON.stringify(categories)),
             products: JSON.parse(JSON.stringify(products)),
-            allProducts: JSON.parse(JSON.stringify(allProducts))
+            
         }
     };
 }

@@ -68,7 +68,7 @@ const NavButton = styled.button`
     position: static;
   }
 `;
-function AuthLinks({ status, userName }) {
+function AuthLinks({ status }) {
     if (status === 'authenticated') {
         return (
             <>
@@ -106,7 +106,6 @@ export default function Header({ products }) {
     const session = useSession();
     const status = session?.status;
     const userData = session?.data?.user;
-    let userName = userData?.name || userData?.email;
     const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [isShowStore, setShowStore] = useState(false);
@@ -260,7 +259,7 @@ export default function Header({ products }) {
                                 ({cart.length})
                             </div>
                         </NavLink>
-                        <AuthLinks status={status} userName={userName} />                    </StyledNav>
+                        <AuthLinks status={status}/>                    </StyledNav>
                     <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
                         <BarsIcon />
                     </NavButton>
@@ -342,15 +341,3 @@ export default function Header({ products }) {
 
     )
 };
-
-export async function getServerSideProps(context) {
-    await mongooseConnect();
-    const products = await Product.find({}, null);
-    return {
-        props: {
-            products: JSON.parse(JSON.stringify(products)),
-        }
-    };
-
-}
-

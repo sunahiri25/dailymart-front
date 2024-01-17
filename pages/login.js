@@ -15,7 +15,7 @@ export default function LoginPage() {
     async function handleFormSubmit(ev) {
         ev.preventDefault();
         setLoginInProgress(true);
-        await signIn('credentials', { email, password, callbackUrl: '/' });
+        await signIn('credentials', { email, password });
         setLoginInProgress(false);
     }
     function handleToggle() {
@@ -49,8 +49,8 @@ export default function LoginPage() {
                                 <input type={showPassword ? 'text' : 'password'} name="password" placeholder="mật khẩu" value={password}
                                     disabled={loginInProgress} required
                                     onChange={ev => setPassword(ev.target.value)} />
-                                <span class="flex justify-around items-center mb-2" onClick={handleToggle}>
-                                    <Icon class="absolute mr-10" icon={icon} size={20} />
+                                <span className="flex justify-around items-center mb-2" onClick={handleToggle}>
+                                    <Icon className="absolute mr-10" icon={icon} size={20} />
                                 </span>
                             </div>
 

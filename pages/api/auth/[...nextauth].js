@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import clientPromise from "@/lib/mongodb";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import { mongooseConnect } from "@/lib/mongoose";
+import { UserInfo } from "@/models/UserInfo";
 
 export const authOptions = {
     secret: process.env.SECRET,
@@ -36,19 +37,25 @@ export const authOptions = {
         ),
     ],
     callbacks: {
-        async jwt({ token, user, account }) {
+        async jwt({ token, user }) {
             if (user?._id) token._id = user._id;
+            if (user?.role === 'admin') token.role = user.role;
+            if (user?.role === 'staff') token.role = user.role;
             return token;
         },
 
         async session({ session, token }) {
             if (token?._id) session.user._id = token._id;
             session.accessToken = token.accessToken;
+            session.role = token.role;
             return session;
         },
         async signIn({ account, profile, credentials, session }) {
             return true;
-        }
+        },
+        async redirect({ url, baseUrl }) {
+            return baseUrl;
+        },
 
     },
     pages: {
@@ -56,7 +63,6 @@ export const authOptions = {
     },
     session: {
         strategy: 'jwt',
-        maxAge: 30 * 24 * 60 * 60,
     },
     jwt: {
         secret: process.env.SECRET,
@@ -66,3 +72,24 @@ export const authOptions = {
 
 export default NextAuth(authOptions);
 
+export async function isAdminRequest(req, res) {
+    const session = await getServerSession(req, res, authOptions)
+    await mongooseConnect();
+    const userInfo = await UserInfo.findOne({ email: session?.user?.email });
+    if (userInfo?.role !== 'admin') {
+        res.status(401);
+        res.end();
+        throw new Error('Unauthorized');
+    }
+};
+
+export async function isStaffRequest(req, res) {
+    const session = await getServerSession(req, res, authOptions)
+    await mongooseConnect();
+    const userInfo = await UserInfo.findOne({ email: session?.user?.email });
+    if (userInfo?.role !== 'staff') {
+        res.status(401);
+        res.end()
+        throw new Error('Unauthorized');
+    }
+};

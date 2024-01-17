@@ -6,13 +6,19 @@ import { Product } from "@/models/Product";
 import Footer from "@/components/Footer";
 import { getSession, useSession } from "next-auth/react";
 import BrandBanner from "@/components/BrandBanner";
-import styled from "styled-components";
 import { Category } from "@/models/Category";
 import CategoryBox from "@/components/CategoryBox";
+import { UserInfo } from "@/models/UserInfo";
 
-export default function Home({ newProducts, memberOffers, allProducts, categories, products }) {
+export default function Home({ newProducts, memberOffers, allProducts, categories, products, role }) {
   const session = useSession();
-
+  if (typeof window !== 'undefined') {
+    if (role?.role === 'admin') {
+      window.location.href = '/admin'
+    } else if (role?.role === 'staff') {
+      window.location.href = '/staff'
+    }
+  }
   return (
     <div>
       <Header products={allProducts} />
@@ -65,6 +71,8 @@ export async function getServerSideProps(context) {
   const allProducts = await Product.find({}, null, { sort: { 'title': -1 } });
   const categories = await Category.find({}, null);
   const products = await Product.find({ active: 'Active' }, null, { sort: { '_id': -1 } });
+  const session = await getSession(context);
+  const role = await UserInfo.findOne({ email: session?.user?.email });
   return {
     props: {
       newProducts: JSON.parse(JSON.stringify(newProducts)),
@@ -72,6 +80,7 @@ export async function getServerSideProps(context) {
       allProducts: JSON.parse(JSON.stringify(allProducts)),
       categories: JSON.parse(JSON.stringify(categories)),
       products: JSON.parse(JSON.stringify(products)),
+      role: JSON.parse(JSON.stringify(role)),
     }
   }
 }

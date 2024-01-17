@@ -2,20 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-select,
+
+img {
+    max-height: 100%;
+}
+
 input[type="email"],
 input[type="password"],
 input[type="tel"],
+input[type='number'],
+input[type="date"],
+select,
 input[type="text"] {
     @apply block w-full mb-2 rounded-md;
-    @apply border p-2 border-gray-300 bg-gray-100;
+    @apply border p-2 border-gray-300;
 }
 
 input[type="email"]:disabled,
 input[type="password"]:disabled,
 input[type="tel"]:disabled,
 input[type="text"]:disabled {
-    @apply bg-gray-300 border-0 cursor-not-allowed text-gray-500;
+    @apply bg-gray-300 mb-2 p-2 border cursor-not-allowed text-gray-500;
 }
 
 label {
@@ -26,10 +33,10 @@ label+input {
     margin-top: -2px;
 }
 
-button,
+/* button,
 .button {
     @apply flex justify-center gap-2 text-gray-700;
-}
+} */
 
 button[type="submit"],
 .submit,
@@ -52,4 +59,63 @@ div.tabs>*.active {
 
 .flying-button-parent button {
     @apply border-primary bg-primary text-white rounded-full;
+}
+
+table.basic {
+    @apply w-full;
+}
+
+table.basic thead tr td {
+    @apply bg-blue-100 uppercase text-gray-600 font-bold;
+}
+
+table.basic tr td {
+    @apply border border-blue-200 p-1;
+}
+
+table.basic a {
+    @apply bg-blue-900 text-white text-sm py-1 px-2 rounded-md inline-flex gap-1 mr-1;
+}
+
+.btn-primary {
+    @apply bg-blue-900 text-white px-4 py-1 rounded-md;
+}
+
+textarea {
+    @apply border-2 border-gray-300 rounded-md px-1 w-full;
+    @apply mb-2 p-2;
+}
+
+
+textarea:focus {
+    @apply outline-none border-blue-900;
+}
+
+
+.btn-red {
+    @apply bg-red-800 text-white px-4 py-1 rounded-md;
+}
+
+.btn-default {
+    @apply bg-gray-500 text-white px-4 py-1 rounded-md;
+}
+
+table.basic-red {
+    @apply w-full;
+}
+
+table.basic-red thead tr td {
+    @apply bg-red-100 uppercase text-gray-600 font-bold;
+}
+
+table.basic-red tr td {
+    @apply border border-red-200 p-1;
+}
+
+table.basic-red a {
+    @apply bg-red-700 text-white text-sm py-1 px-2 rounded-md inline-flex gap-1 mr-1;
+}
+
+.btn-primary-red {
+    @apply bg-red-700 text-white px-4 py-1 rounded-md;
 }

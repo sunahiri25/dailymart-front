@@ -7,7 +7,14 @@ export default async function handler(req, res) {
         res.json({ message: 'Only GET requests allowed' })
         return;
     }
-    const { email } = req.query;
-    const orderInfo = await Order.find({ email });
-    res.json(orderInfo);
+    if (req.query?.email) {
+        const { email } = req.query;
+        const orderInfo = await Order.find({ email });
+        res.json(orderInfo);
+    }
+    if (req.query?.id) {
+        const { id } = req.query;
+        const orderInfo = await Order.findOne({ _id: id });
+        res.json(orderInfo);
+    }
 }

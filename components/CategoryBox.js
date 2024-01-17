@@ -30,7 +30,7 @@ export default function CategoryBox({ categories, products, name }) {
                             {productsInCategory
                                 .slice(0, 10)
                                 .map(product => (
-                                    <div key={product}>
+                                    <div key={product._id}>
                                         <ProductBox {...product} />
                                     </div>
                                 ))}

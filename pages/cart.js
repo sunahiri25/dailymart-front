@@ -8,6 +8,7 @@ import { Category } from "@/models/Category";
 import { Discount } from "@/models/Discount";
 import { Product } from "@/models/Product";
 import axios from "axios";
+import { set } from "mongoose";
 import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
@@ -70,12 +71,11 @@ export default function Cart({ discounts, allProducts, categories }) {
     }, [cart]);
 
     useEffect(() => {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        if (window?.location.href.includes('success')) {
-            setIsSuccess(true);
-            clearCart();
+        if (typeof window !== 'undefined') {
+            if (window?.location.href.includes('success')) {
+                setIsSuccess(true);
+                clearCart();
+            }
         }
     }, [isSuccess]);
 
@@ -186,6 +186,7 @@ export default function Cart({ discounts, allProducts, categories }) {
                             <div className='bg-white p-6 rounded shadow-lg'>
                                 <h1 className="font-bold text-2xl">Thanh toán thành công!</h1>
                                 <p className="text-lg mt-4">Cảm ơn bạn đã đặt hàng.</p>
+                                <p className="text-lg mt-4">Mã đơn hàng của bạn là: <span className="font-bold"> {window.location.href.slice(window.location.href.indexOf('id=') + 3)} </span></p>
                             </div>
                         </Box>
                     </ColumnsWrapper>

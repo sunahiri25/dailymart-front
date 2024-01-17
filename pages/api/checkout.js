@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         const discount = discounts.find(item => item.category.toString() === info.category.toString());
         const category = await Category.findOne({ _id: info.category });
         const taxRate = await stripe.taxRates.create({
-            display_name: 'VAT ' + info.title,
+            display_name: 'VAT ' + info.title[0, info.title.length / 2],
             inclusive: false,
             percentage: category.vat,
         });
@@ -163,11 +163,11 @@ export default async function handler(req, res) {
         });
 
         res.json({
-            url: session.url,
+            url: session.url + "&id=" + orderDoc._id.toString(),
         });
     } else {
         res.json({
-            url: process.env.PUBLIC_URL + '/cart?success=1',
+            url: process.env.PUBLIC_URL + '/cart?success=1&id=' + orderDoc._id.toString(),
         });
     };
 }

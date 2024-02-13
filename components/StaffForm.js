@@ -1,5 +1,5 @@
 import axios from "axios";
-import { set } from "mongoose";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toastr from 'toastr';
@@ -30,40 +30,36 @@ export default function StaffForm({
     const [password, setPassword] = useState(existingPassword || '');
     const router = useRouter();
     const [goToStaff, setGoToStaff] = useState(false);
-    const [stores, setStores] = useState([]);
-
+    const session = useSession()
     useEffect(() => {
-        axios.get('/api/stores').then(res => setStores(res.data));
-    }, []);
-
-    useEffect(() => {
-        if (store) {
-            axios.get('/api/stores?id=' + store).then(res => {
-                if (res.data?.manager) {
-                    setManager(res.data.manager);
-                } else {
-                    setManager('');
+        axios.get('/api/admin/stores').then(res => {
+            res.data.map(s => {
+                if (s.manager && s.manager?._id === session?.data?.user?._id) {
+                    setStore(s);
+                    setManager(s.manager);
                 }
-            });
-        } else {
-            setManager('');
+            }
+            );
         }
-    }, [store]);
+        );
+    }, [session]);
+
+
     async function saveStaff(e) {
         e.preventDefault();
         const data = { name, email, password, birthDay, gender, address, phone, salary, store, manager };
         if (_id) {
-            await axios.put('/api/staffs/', { ...data, _id });
+            await axios.put('/api/admin/staffs/', { ...data, _id });
             toastr.success(`Staff ${data.name} updated!`, 'Success', { timeOut: 2000 })
         } else {
-            await axios.post('/api/staffs', data);
+            await axios.post('/api/admin/staffs', data);
             toastr.success(`Staff ${data.name} created!`, 'Success', { timeOut: 2000 })
         }
         setGoToStaff(true);
     };
 
     if (goToStaff) {
-        router.push('/staffs');
+        router.push('/admin/staffs');
     };
 
 
@@ -96,12 +92,7 @@ export default function StaffForm({
             <label className="text-blue-900">Salary</label>
             <input type="text" placeholder="salary" value={salary} onChange={(e) => setSalary(e.target.value)} />
             <label className="text-blue-900">Store</label>
-            <select value={store} onChange={(e) => setStore(e.target.value)} required>
-                <option value="">Select store</option>
-                {stores.map(store => (
-                    <option key={store._id} value={store._id}>{store.name}</option>
-                ))}
-            </select>
+            <input type="text" placeholder="store" value={(store?.name ? store.name : '')} disabled />
             <label className="text-blue-900">Manager</label>
             <input type="text" placeholder="manager" value={(manager?.email ? manager.email : '')} disabled className="bg-gray-200" />
             <button type="submit" className="btn-primary">Save</button>

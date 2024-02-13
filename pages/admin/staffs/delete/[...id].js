@@ -22,7 +22,7 @@ export default function DeleteStaffPage() {
         })
     }, [id]);
     function goBack() {
-        router.push('/staffs');
+        router.push('/admin/staffs');
     }
     async function deleteStaff() {
         await axios.delete('/api/admin/staffs/?id=' + id);

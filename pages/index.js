@@ -41,6 +41,7 @@ export default function Home({ newProducts, categories, products }) {
       <CategoryBox categories={categories} products={products} name={'Rau Lá'} />
       <CategoryBox categories={categories} products={products} name={'Trái cây tươi'} />
       <CategoryBox categories={categories} products={products} name={'Củ, Quả'} />
+
       <BrandBanner />
       <CategoryBox categories={categories} products={products} name={'Kẹo - Chocolate'} />
       <CategoryBox categories={categories} products={products} name={'Bánh Snack'} />
